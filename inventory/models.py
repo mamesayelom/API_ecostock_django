@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Modèle représentant un entrepôt de stockage
 class Warehouse(models.Model):
@@ -46,7 +47,7 @@ class Product(models.Model):
         default=AVAILABLE
     )
 
-    # 🔗 Relation : un produit appartient à un entrepôt
+    # Relation : un produit appartient à un entrepôt
     warehouse = models.ForeignKey(
         Warehouse,
         on_delete=models.CASCADE,
@@ -55,3 +56,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    #Le save() ne se déclenche que si quelqu'un modifie le produit(une méthode qu'on appelle avant de sauvegarder)
+    #Mais un produit peut dépasser sa date de péremption un jour où personne ne le touche
+    def save(self, *args, **kwargs):
+        # Sécurité : si le produit est périmé à la date du jour,
+        # on force le statut, sauf s'il était déjà "reserved"
+        # (à adapter selon ta règle métier exacte)
+        if self.expiration_date < timezone.now().date() and self.status != self.RESERVED:
+            self.status = self.EXPIRED
+        super().save(*args, **kwargs)

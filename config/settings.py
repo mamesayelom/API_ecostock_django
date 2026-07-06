@@ -39,7 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'inventory',
+    'rest_framework_simplejwt',
 ]
+#ça dit à Django REST Framework : "à chaque requête qui arrive, regarde s'il y a un token JWT dans le header Authorization, et si oui, vérifie-le et retrouve l'utilisateur correspondant."
+#Sans cette config, DRF ne saurait pas comment lire un token JWT du tout
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

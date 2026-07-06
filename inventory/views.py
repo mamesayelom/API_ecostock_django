@@ -4,6 +4,7 @@ from .serializers import ProductSerializer,WarehouseSerializer,MoveProductSerial
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 class WarehouseViewSet(ModelViewSet):
@@ -14,6 +15,25 @@ class WarehouseViewSet(ModelViewSet):
     # Comment transformer les données en JSON
     serializer_class = WarehouseSerializer
 
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    #detail=True  → action sur UN objet (pk obligatoire)
+    #detail=False → action sur LA COLLECTION
+    #Quand detail=True, Django REST Framework ajoute automatiquement pk dans la vue et tu peux recuperer avec self.get_object()
+    @action(detail=True, methods=['Get'])
+    def audit(self,request,pk=None):
+        warehouse=self.get_object()
+        total_products = warehouse.products.count()
+
+        return Response(
+            {
+                "warehouse": warehouse.name,
+                "total_products": total_products,
+            },
+            status=status.HTTP_200_OK
+        )
+
+
 
 class ProductViewSet(ModelViewSet):
 
@@ -22,6 +42,8 @@ class ProductViewSet(ModelViewSet):
 
     # Comment transformer les données en JSON
     serializer_class = ProductSerializer
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 
@@ -82,7 +104,6 @@ class ProductViewSet(ModelViewSet):
         )
 
 
-   
 
         
 

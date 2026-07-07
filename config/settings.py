@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'inventory',
+    #C'est un système qui permet au serveur de reconnaître un utilisateur sans garder une session classique.
     'rest_framework_simplejwt',
 ]
 #ça dit à Django REST Framework : "à chaque requête qui arrive, regarde s'il y a un token JWT dans le header Authorization, et si oui, vérifie-le et retrouve l'utilisateur correspondant."
